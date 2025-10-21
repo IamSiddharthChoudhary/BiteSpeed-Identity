@@ -23,10 +23,14 @@ console.log("Env data:");
 console.log(url);
 console.log(key);
 
-const supabase = createClient(url,key)
+const supabase = createClient(url,key);
 
 export async function POST(req: NextRequest) {
-    const rq: IdentifyRequest = await req.json()
+
+    const text = await req.json();
+    console.log(text);
+    const rq: IdentifyRequest = text;
+
     const { email, phoneNumber } = rq
 
     if (!email && !phoneNumber) {
