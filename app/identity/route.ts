@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const { email, phoneNumber } = rq
 
     if (!email && !phoneNumber) {
-      return NextResponse.json({ error: `Email and phoneNumber not porvided` })
+      return NextResponse.json({ error: 'Email and phoneNumber not porvided' })
     }
 
     let q = supabase.from('Contact').select('*').is('deletedAt', null)
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     const { data, error } = await q
     if (error) {
-      return NextResponse.json({ error: `Database retrieval failed ${error}`})
+      return NextResponse.json({ error: 'Database retrieval failed' })
     }
 
     console.log("query data is-", data)
@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
           phoneNumber,
           linkedId: null,
           linkPrecedence: 'primary',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         })
         .select()
         .single()
