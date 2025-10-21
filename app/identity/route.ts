@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     const { data, error } = await q
     if (error) {
-      return NextResponse.json({ error: 'Database retrieval failed' })
+      return NextResponse.json({ error: 'Database retrieval failed' }, {status:500})
     }
 
     console.log("query data is-", data)
