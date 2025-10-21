@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const { email, phoneNumber } = rq
 
     if (!email && !phoneNumber) {
-      return NextResponse.json({ error: 'Email and phoneNumber not porvided' })
+      return NextResponse.json({ error: 'Email and phoneNumber not porvided' }, {status:400})
     }
 
     let q = supabase.from('Contact').select('*').is('deletedAt', null)
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
         .single()
 
       if (insertErr || !inserted) {
-        return NextResponse.json({ error: 'Error in creating contact' })
+        return NextResponse.json({ error: 'Error in creating contact' }, {status:500})
       }
 
       return NextResponse.json({
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
 
     if (relErr) {
       console.error('Error fetching related:', relErr)
-      return NextResponse.json({ error: 'Database error' })
+      return NextResponse.json({ error: 'Database error' }, {status:500})
     }
 
     const { data: childContacts, error: childErr } = await supabase
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     if (childErr) {
       console.error('Child fetch failed:', childErr)
-      return NextResponse.json({ error: 'Database error' })
+      return NextResponse.json({ error: 'Database error' }, {status:500})
     }
 
     const allConts = [...(rel || []), ...(childContacts || [])]
@@ -218,5 +218,5 @@ export async function POST(req: NextRequest) {
         phoneNumbers: Array.from(phones),
         secondaryContactIds: secIds
       }
-    })
+    }, { status: 200 })
 }
