@@ -61,9 +61,7 @@ export async function POST(req: NextRequest) {
           email,
           phoneNumber,
           linkedId: null,
-          linkPrecedence: 'primary',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          linkPrecedence: 'primary'
         })
         .select()
         .single()
