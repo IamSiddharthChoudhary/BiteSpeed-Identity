@@ -16,10 +16,14 @@ type IdentifyRequest = {
   phoneNumber?: string | null
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_URL || "",
-  process.env.NEXT_PUBLIC_KEY || ""
-)
+const url = process.env.NEXT_PUBLIC_URL || "";
+const key = process.env.NEXT_PUBLIC_KEY || "";
+
+console.log("Env data:");
+console.log(url);
+console.log(key);
+
+const supabase = createClient(url,key)
 
 export async function POST(req: NextRequest) {
     const rq: IdentifyRequest = await req.json()
