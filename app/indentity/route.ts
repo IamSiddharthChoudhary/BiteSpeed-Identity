@@ -1,15 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
-type Contact = {
-  id: number
-  phoneNumber: string | null
-  email: string | null
-  linkedId: number | null
-  linkPrecedence: string
-  createdAt: string
-  deletedAt: string | null
-}
+// type Contact = {
+//   id: number
+//   phoneNumber: string | null
+//   email: string | null
+//   linkedId: number | null
+//   linkPrecedence: string
+//   createdAt: string
+//   deletedAt: string | null
+// }
 
 type IdentifyRequest = {
   email?: string | null
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     let q = supabase.from('Contact').select('*').is('deletedAt', null)
 
-    const filters = []
+    // const filters = []
     
     const { data, error } = await q
     if (error) {
@@ -196,7 +196,7 @@ export async function POST(req: NextRequest) {
         secIds.push(contact.id)
     }
 
-    let testCount = uniqContacts.length
+    // let testCount = uniqContacts.length
 
     return NextResponse.json({
       contact: {
