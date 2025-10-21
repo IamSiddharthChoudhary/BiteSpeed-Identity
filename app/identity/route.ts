@@ -55,7 +55,9 @@ export async function POST(req: NextRequest) {
           email,
           phoneNumber,
           linkedId: null,
-          linkPrecedence: 'primary'
+          linkPrecedence: 'primary',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         })
         .select()
         .single()
@@ -112,7 +114,6 @@ export async function POST(req: NextRequest) {
             uniqContacts.push(contact)
         }
     }
-
 
     const primes = uniqContacts
     .filter(c => c.linkPrecedence == 'primary')
