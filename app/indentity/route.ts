@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     const { email, phoneNumber } = rq
 
     if (!email && !phoneNumber) {
-      return NextResponse.json({ error: 'Email or phoneNumber must be porvided' })
+      return NextResponse.json({ error: 'Email and phoneNumber not porvided' })
     }
 
     let q = supabase.from('Contact').select('*').is('deletedAt', null)
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Database retrieval failed' })
     }
 
-    console.log("Query Data is-", data)
+    console.log("query data is-", data)
 
     if (!data || data.length == 0) {
       const { data: inserted, error: insertErr } = await supabase
@@ -106,18 +106,24 @@ export async function POST(req: NextRequest) {
     }
 
 
-    const primaries = uniqContacts
-    .filter(c => c.linkPrecedence === 'primary')
+    const primes = uniqContacts
+    .filter(c => c.linkPrecedence == 'primary')
     .sort((a, b) => {
         const dateA = new Date(a.createdAt).getTime()
         const dateB = new Date(b.createdAt).getTime()
         return dateA - dateB
     })
-    const mainContact = primaries[0]
+    const mainContact = primes[0]
 
-    const sameCombo = uniqContacts.some(c => c.email === email && c.phoneNumber === phoneNumber)
+    let matchFound = false
+    for (const contact of uniqContacts) {
+        if (contact.email == email && contact.phoneNumber == phoneNumber) {
+            matchFound = true
+            break
+        }
+    }
 
-    if (!sameCombo && email && phoneNumber) {
+    if (!matchFound && email && phoneNumber) {
       const { data: newSec, error: secErr } = await supabase
         .from('Contact')
         .insert({
@@ -136,9 +142,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (primaries.length > 1) {
-      const newerOnes = primaries.slice(1)
-      for (const p of newerOnes) {
+    if (primes.length > 1) {
+      const newOnes = primes.slice(1)
+      for (const p of newOnes) {
         await supabase
           .from('Contact')
           .update({
@@ -176,15 +182,20 @@ export async function POST(req: NextRequest) {
     if (mainContact.email) emails.add(mainContact.email)
     if (mainContact.phoneNumber) phones.add(mainContact.phoneNumber)
 
-    const secondaryContacts = uniqContacts
-    .filter(contact => contact.id !== mainContact.id)
-    .sort((a, b) => +new Date(a.createdAt) - +new Date(b.createdAt))
+   const secondaryContacts = uniqContacts
+    .filter(c => c.id != mainContact.id)
+    .sort((a, b) => {
+        const t1 = new Date(a.createdAt).getTime()
+        const t2 = new Date(b.createdAt).getTime()
+        return t1 - t2
+    })
 
     for (const contact of secondaryContacts) {
         if (contact.email) emails.add(contact.email)
         if (contact.phoneNumber) phones.add(contact.phoneNumber)
         secIds.push(contact.id)
     }
+
     let testCount = uniqContacts.length
 
     return NextResponse.json({
