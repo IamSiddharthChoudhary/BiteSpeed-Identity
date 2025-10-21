@@ -38,9 +38,15 @@ export async function POST(req: NextRequest) {
     }
 
     let q = supabase.from('Contact').select('*').is('deletedAt', null)
-
-    // const filters = []
     
+    const fltrs = []
+    if (email) fltrs.push(`email.eq.${email}`)
+    if (phoneNumber) fltrs.push(`phoneNumber.eq.${phoneNumber}`)
+    
+    if (fltrs.length > 0) {
+      q = q.or(fltrs.join(','))
+    }
+
     const { data, error } = await q
     if (error) {
       return NextResponse.json({ error: 'Database retrieval failed' })
